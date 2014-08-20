@@ -1,8 +1,5 @@
 package com.arshu.roommate.server.entity;
 
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +17,12 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class Mate {
 	@Id
-	private Long id;
+	private Long mateId;
+	public static final String ID = "mateId";
 	
+	private String userName;
+	public static final String USER_NAME = "userName";
 	
-	private int tableId;
-	 
 	private String password;
 	private String emailAddress;
 	private String description;
@@ -34,53 +32,54 @@ public class Mate {
 	
 	@NotPersistent
 	private List<Room> inRoomValues = new ArrayList<Room>();
-	
+
+	public Mate() {
+	}
 	
 	public void loadAllRooms(){
 		if(inRooms != null){
 			Objectify ofy =  RMOfyService.ofy();
-			Room a =ofy.get(inRooms.get(0));
-			inRoomValues.add(a);
+			for(Key<Room> key:inRooms){
+				inRoomValues.add(ofy.get(key));
+			}
 		}
 	}
 	
 	public List<Room> getInRoomValues() {
-		
 		return inRoomValues;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public static String getId() {
+		return ID;
 	}
 
 	public void setInRoomValues(List<Room> inRoomValues) {
 		this.inRoomValues = inRoomValues;
-	}
-
-	public Mate() {
 	}
 	
 	public List<Key<Room>> getInRooms() {
 		return inRooms;
 	}
 
-
 	public void setInRooms(List<Key<Room>> inRooms) {
 		this.inRooms = inRooms;
 	}
 	
-
-	public Long getId() {
-		return id;
+	public Long getMateId() {
+		return mateId;
 	}
 
-
-
-	public int getTableId() {
-		return tableId;
+	public void setMateId(Long mateId) {
+		this.mateId = mateId;
 	}
-
-
-	public void setTableId(int tableId) {
-		this.tableId = tableId;
-	}
-
 
 	public String getPassword() {
 		return password;

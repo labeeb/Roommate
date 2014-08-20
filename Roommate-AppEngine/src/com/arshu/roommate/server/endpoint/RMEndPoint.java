@@ -7,6 +7,7 @@ import com.arshu.roommate.RMConstants;
 import com.arshu.roommate.RMOfyService;
 import com.arshu.roommate.server.entity.Mate;
 import com.arshu.roommate.server.entity.Room;
+import com.arshu.roommate.vo.JoinRoomRequest;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -19,6 +20,47 @@ import com.googlecode.objectify.Query;
  namespace = @ApiNamespace(ownerDomain = "arshu.com", ownerName = "arshu.com", packagePath = "roommate.server.endpoint")
 )
 public class RMEndPoint {
+	
+	@ApiMethod(name = "matesJoinRoom")
+	public Room matesJoinRoom(JoinRoomRequest joinRoomRequest){
+		Objectify ofy = RMOfyService.ofy();
+		
+		Key<Room> roomKey = null;
+		Room room = joinRoomRequest.getRoom();
+		
+		Long roomId = room.getRoomId();
+		
+		if( roomId != null && roomId > 0){
+			roomKey = Key.create(Room.class, roomId);
+			room = ofy.get(roomKey);
+		}else{
+			roomKey = ofy.put(room);
+		}
+		
+		for(Long mateId: joinRoomRequest.getMateList() ){
+			Key<Mate> mateKey = Key.create(Mate.class, mateId);
+			
+			room.getMatesInRoom().add(mateKey);
+			
+			Mate mate = ofy.get(mateKey);
+			mate.getInRooms().add(roomKey);
+			ofy.put(mate);
+		}
+		ofy.put(room);
+		
+		room.refreshAllMates();
+		
+		return room;
+	}
+	
+	@ApiMethod(name = "getAllRooms")
+	public List<Room> getAllRooms(Mate mate){
+		Objectify ofy = RMOfyService.ofy();
+		Mate mate1 = ofy.get(Key.create(Mate.class, mate.getMateId()));
+		mate1.loadAllRooms();
+		return mate1.getInRoomValues();
+	}
+	
 	@ApiMethod(name = "doLogin")
 	public Mate doLogin(Mate checkMate) {
 		//ObjectifyService ofy;
@@ -27,7 +69,7 @@ public class RMEndPoint {
 		//Mate mate = new Mate();
 		
 		Query<Mate> query = ofy.query(Mate.class);
-		query.filter("emailAddress", checkMate.getEmailAddress());
+		query.filter(Mate.USER_NAME, checkMate.getUserName());
 		Mate mate =query.get();
 		if(null != mate){
 			mate.loadAllRooms();

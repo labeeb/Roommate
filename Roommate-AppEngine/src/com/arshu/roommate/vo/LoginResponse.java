@@ -2,12 +2,10 @@ package com.arshu.roommate.vo;
 
 import com.arshu.roommate.server.entity.Mate;
 import com.arshu.roommate.server.entity.Room;
-import com.arshu.roommate.server.entity.RoomMate;
 
 public class LoginResponse {
 	private Mate mate;
 	private Room room;
-	private RoomMate roomMate;
 	public Mate getMate() {
 		return mate;
 	}
@@ -20,14 +18,4 @@ public class LoginResponse {
 	public void setRoom(Room room) {
 		this.room = room;
 	}
-	public RoomMate getRoomMate() {
-		return roomMate;
-	}
-	public void setRoomMate(RoomMate roomMate) {
-		this.roomMate = roomMate;
-	}
-	
-	
-	
-
 }
