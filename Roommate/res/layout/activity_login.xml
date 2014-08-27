@@ -10,67 +10,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.arshu.roommate.view.LoginActivity" >
 
-    <!-- sign up progress -->
+    <!-- Login progress -->
 
     <ProgressBar
-        android:id="@+id/signUp_progress"
+        android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
     <ScrollView
-        android:id="@+id/signUp_form"
+        android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
         <LinearLayout
-            android:id="@+id/signUp_form_layout"
+            android:id="@+id/login_form_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <EditText
-                android:id="@+id/signUp_userName_editText"
+                android:id="@+id/login_userName_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/User_Name"
-                android:inputType="textNoSuggestions"
-                android:maxLines="1"
-                android:singleLine="true" />
-            <EditText
-                android:id="@+id/signUp_email_editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/Email"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
 
             <EditText
-                android:id="@+id/signUp_password_editText"
+                android:id="@+id/login_password_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/Password"
-                
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:singleLine="true" />
-            <EditText
-                android:id="@+id/signUp_passwordConfirm_editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/Password"
-                android:imeActionId="@+id/signUp_register_button"
-                android:imeActionLabel="@string/Register"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/Sign_in"
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
 
             <Button
-                android:id="@+id/signUp_register_button"
+                android:id="@+id/login_sign_in_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="onSignInButtonClick"
+                android:text="@string/Sign_in"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/login_register_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/CXnK52tdKenR0zmpJDIbqR__38c\"",
+ "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/M6lzie9QXOaYPvQU4cEcQjSry-s\"",
  "discoveryVersion": "v1",
  "id": "rmendpoint:v1",
  "name": "rmendpoint",
@@ -74,6 +74,22 @@
   }
  },
  "schemas": {
+  "JoinRoomRequest": {
+   "id": "JoinRoomRequest",
+   "type": "object",
+   "properties": {
+    "mateList": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "format": "int64"
+     }
+    },
+    "room": {
+     "$ref": "Room"
+    }
+   }
+  },
   "Mate": {
    "id": "Mate",
    "type": "object",
@@ -84,22 +100,21 @@
     "emailAddress": {
      "type": "string"
     },
-    "id": {
-     "type": "string",
-     "format": "int64"
-    },
     "inRoomValues": {
      "type": "array",
      "items": {
       "$ref": "Room"
      }
     },
+    "mateId": {
+     "type": "string",
+     "format": "int64"
+    },
     "password": {
      "type": "string"
     },
-    "tableId": {
-     "type": "integer",
-     "format": "int32"
+    "userName": {
+     "type": "string"
     }
    }
   },
@@ -107,6 +122,12 @@
    "id": "Room",
    "type": "object",
    "properties": {
+    "allMates": {
+     "type": "array",
+     "items": {
+      "$ref": "Mate"
+     }
+    },
     "description": {
      "type": "string"
     },
@@ -119,6 +140,18 @@
     "roomId": {
      "type": "string",
      "format": "int64"
+    }
+   }
+  },
+  "RoomCollection": {
+   "id": "RoomCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Room"
+     }
     }
    }
   }
@@ -134,6 +167,36 @@
    },
    "response": {
     "$ref": "Mate"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getAllRooms": {
+   "id": "rmendpoint.getAllRooms",
+   "path": "roomcollection",
+   "httpMethod": "GET",
+   "request": {
+    "$ref": "Mate",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "RoomCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "matesJoinRoom": {
+   "id": "rmendpoint.matesJoinRoom",
+   "path": "matesJoinRoom",
+   "httpMethod": "POST",
+   "request": {
+    "$ref": "JoinRoomRequest",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "Room"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

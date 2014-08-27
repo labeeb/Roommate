@@ -32,9 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>SharedCode</name>
+			<name>CommonCode</name>
 			<type>2</type>
-			<locationURI>SharedCode</locationURI>
+			<location>/Users/labeebp/Documents/EclipseWorkspace/myGithub/devBranch/Roommate/SharedCode/src</location>
 		</link>
 	</linkedResources>
 	<variableList>

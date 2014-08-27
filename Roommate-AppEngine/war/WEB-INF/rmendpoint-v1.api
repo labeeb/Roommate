@@ -43,6 +43,22 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "rmendpoint.matesJoinRoom" : {
+      "path" : "matesJoinRoom",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.arshu.roommate.server.endpoint.RMEndPoint.matesJoinRoom",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "rmendpoint.doLogin" : {
       "path" : "doLogin",
       "httpMethod" : "POST",
@@ -58,6 +74,22 @@
       "response" : {
         "body" : "autoTemplate(backendResponse)"
       }
+    },
+    "rmendpoint.getAllRooms" : {
+      "path" : "roomcollection",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.arshu.roommate.server.endpoint.RMEndPoint.getAllRooms",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
     }
   },
   "descriptor" : {
@@ -66,12 +98,12 @@
         "id" : "Mate",
         "type" : "object",
         "properties" : {
-          "id" : {
+          "mateId" : {
             "type" : "string",
             "format" : "int64"
           },
-          "tableId" : {
-            "type" : "integer"
+          "userName" : {
+            "type" : "string"
           },
           "password" : {
             "type" : "string"
@@ -106,6 +138,40 @@
           },
           "ownerMateId" : {
             "type" : "string"
+          },
+          "allMates" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "Mate"
+            }
+          }
+        }
+      },
+      "JoinRoomRequest" : {
+        "id" : "JoinRoomRequest",
+        "type" : "object",
+        "properties" : {
+          "mateList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "int64"
+            }
+          },
+          "room" : {
+            "$ref" : "Room"
+          }
+        }
+      },
+      "RoomCollection" : {
+        "id" : "RoomCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "Room"
+            }
           }
         }
       }
@@ -119,12 +185,28 @@
           "$ref" : "Mate"
         }
       },
+      "com.arshu.roommate.server.endpoint.RMEndPoint.matesJoinRoom" : {
+        "request" : {
+          "$ref" : "JoinRoomRequest"
+        },
+        "response" : {
+          "$ref" : "Room"
+        }
+      },
       "com.arshu.roommate.server.endpoint.RMEndPoint.doLogin" : {
         "request" : {
           "$ref" : "Mate"
         },
         "response" : {
           "$ref" : "Mate"
+        }
+      },
+      "com.arshu.roommate.server.endpoint.RMEndPoint.getAllRooms" : {
+        "request" : {
+          "$ref" : "Mate"
+        },
+        "response" : {
+          "$ref" : "RoomCollection"
         }
       }
     }
