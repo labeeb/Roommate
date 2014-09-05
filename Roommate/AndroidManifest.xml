@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.arshu.roommate"
+    package="com.arshu.roommate.client"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -32,7 +32,7 @@
       
         
         <activity
-            android:name="com.arshu.roommate.view.LoginActivity"
+            android:name="com.arshu.roommate.client.view.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>

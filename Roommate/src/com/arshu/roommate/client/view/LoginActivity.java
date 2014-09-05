@@ -1,4 +1,10 @@
-package com.arshu.roommate.view;
+package com.arshu.roommate.client.view;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -15,8 +21,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.arshu.roommate.R;
 import com.arshu.roommate.RMUtils;
+import com.arshu.roommate.client.R;
+import com.arshu.roommate.client.db.RMDBHelper;
+import com.arshu.roommate.client.db.RMDBUtil;
+import com.arshu.roommate.client.db.entity.CLMate;
+import com.arshu.roommate.client.db.entity.CLRoom;
+import com.arshu.roommate.client.db.entity.CLRoomMate;
+import com.arshu.roommate.client.util.RMClientConstants;
+import com.arshu.roommate.client.util.RMLog;
+import com.google.api.client.json.jackson2.JacksonFactory;
 
 /**
  * Read user name and password, check with server
@@ -63,13 +77,87 @@ public class LoginActivity extends Activity  {
 	}
 
 	public void onSignInButtonClick(View view){
-		attemptLogin();
+		//attemptLogin();
+		
+		
+		CLMate mate = new CLMate();
+		mate.setUserName("Test");
+		mate.setPassword("Pass");
+		mate.setEmailAddress("email");
+		mate.setMateId(Long.valueOf(12312));
+		
+		
+		CLRoom room = new CLRoom();
+		room.setName("roomName");
+		room.setRoomId(12l);
+		room.setDescription("desc");  
+		
+		CLRoomMate roomMate = new CLRoomMate(room,mate);
+		
+		CLRoom room2 = new CLRoom();
+		room2.setName("second room");
+		room2.setRoomId(13L);
+		room2.setDescription("second desc");      
+		
+		CLRoomMate roomMate2 = new CLRoomMate(room2,mate);
+		
+	
+		if(null != mate){
+			RMLog.d(this,"POC", "mate id: "+mate.getMateId());
+			try {
+				
+				RMDBUtil.getMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(mate);
+				RMDBUtil.getRoomDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(room);
+				RMDBUtil.getRoomDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(room2);
+				
+				RMDBUtil.getRoomMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(roomMate);
+				RMDBUtil.getRoomMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(roomMate2);
+			} catch (SQLException e) {
+				RMLog.d(this,"POC","SQLException createOrUpdate");
+				e.printStackTrace();
+			}
+			//return true;
+		}
 	}
 	
 	public void onRegisterButtonClick(View view){
-		Intent signUpActivityIntent = new Intent(LoginActivity.this,SignUpActivity.class);
-		startActivity(signUpActivityIntent);
-		finish();
+		
+		try {
+			RMDBHelper helper = RMDBHelper.getHelper(LoginActivity.this);
+			List<CLMate> mates = RMDBUtil.getMateDao(helper).queryForAll();
+			if(mates != null){
+				RMLog.d(this,"POC","mates not null "+mates.size());
+				List<CLRoom> inRooms = CLRoomMate.lookupRoomsForMate(mates.get(0), helper);
+				RMLog.d(this,"POC","inRooms not null "+inRooms.size());
+				for(CLRoom room:inRooms){
+					 RMLog.d(this,"POC","inRooms name  "+room.getName());
+				}
+				
+			}else{
+				RMLog.d(this,"POC","mates null");
+			}
+			
+			// now from room 
+			List<CLRoom> rooms = RMDBUtil.getRoomDao(helper).queryForAll(); 
+			if(rooms != null){
+				RMLog.d(this,"POC","rooms not null "+rooms.size());
+				List<CLMate> allMates = CLRoomMate.lookupMatesForRoom(rooms.get(0), helper); 
+				RMLog.d(this,"POC","rooms not null "+allMates.size());
+				for(CLMate mate:allMates){
+					 RMLog.d(this,"POC","CLMate in room name  "+mate.getUserName());
+				}
+				
+			}else{
+				RMLog.d(this,"POC","rooms null");
+			}
+			
+		} catch (SQLException e) {
+			RMLog.d(this,"POC","SQLException query");
+			e.printStackTrace();
+		}
+//		Intent signUpActivityIntent = new Intent(LoginActivity.this,SignUpActivity.class);
+//		startActivity(signUpActivityIntent);
+//		finish();
 	}
 	
 	public void attemptLogin() {
@@ -169,28 +257,48 @@ public class LoginActivity extends Activity  {
 
 		private final String mUserName;
 		private final String mPassword;
+		private CLMate mate = null;;
 
 		UserLoginTask(String userName, String password) {
 			mUserName = userName;
 			mPassword = password;
+			
 		}
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-
+			
 			try {
-				// Simulate network access.
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				return false;
+				mate = new CLMate();
+				mate.setUserName(mUserName);
+				mate.setPassword(mPassword);
+				mate.setEmailAddress("email");
+				mate.setMateId(Long.valueOf(12312));
+				
+				Collection<CLRoom> inRoomValues = new ArrayList<CLRoom>();
+				CLRoom room = new CLRoom();
+				room.setName("roomName");
+				room.setRoomId(12l);
+				room.setDescription("desc");      
+				
+				inRoomValues.add(room);
+				
+				//mate.setInRooms(inRoomValues);
+			
+				if(null != mate){
+					RMLog.d(getClass(), "mate id: "+mate.getMateId());
+					RMDBUtil.getMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(mate);
+					return true;
+				}else{
+					RMLog.d(getClass(), "mate is null ");
+					return false;
+				}
+			} catch (SQLException e) {
+				RMLog.e(getClass(), "IOException");
+				e.printStackTrace();
 			}
 
-			if ("testuser".equals(mUserName)) {// test user name
-				return true;
-			} else {
-				return false;
-			}
+			return true;
 			
 		}
 
@@ -199,10 +307,19 @@ public class LoginActivity extends Activity  {
 			mAuthTask = null;
 			showProgress(false);
 
-			if (success) {
+			if (success && null != mate) { //Double check 
 				Intent homeActivityIntent = new Intent(LoginActivity.this,HomeActivity.class);
-				startActivity(homeActivityIntent);
-				finish();
+				String json = null;
+				try {
+					json = new JacksonFactory().toPrettyString(mate);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if(null != json){
+					homeActivityIntent.putExtra(RMClientConstants.BK_MATE_JSON,json);
+					startActivity(homeActivityIntent);
+					finish();
+				}
 			} else {
 				mPasswordView
 						.setError(getString(R.string.error_incorrect_password));
