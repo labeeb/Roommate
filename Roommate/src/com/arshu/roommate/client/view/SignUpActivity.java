@@ -1,4 +1,6 @@
-package com.arshu.roommate.view;
+package com.arshu.roommate.client.view;
+
+import java.io.IOException;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,19 +12,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.arshu.roommate.R;
 import com.arshu.roommate.RMUtils;
-import com.arshu.roommate.appengine.Connector;
-import com.arshu.roommate.server.endpoint.rmendpoint.model.Mate;
-import com.arshu.roommate.task.RegistrationTask;
-import com.arshu.roommate.view.LoginActivity.UserLoginTask;
+import com.arshu.roommate.client.R;
+import com.arshu.roommate.client.appengine.Connector;
+import com.arshu.roommate.client.util.RMLog;
+import com.arshu.roommate.server.endpoint.rmendpoint.model.AEMate;
 
 public class SignUpActivity extends Activity {
 
@@ -114,7 +113,7 @@ public class SignUpActivity extends Activity {
 			}
 		}
 		
-		Mate mate = new Mate();
+		AEMate mate = new AEMate();
 		mate.setEmailAddress(mEmailView.getText().toString());
 		mate.setUserName(mUserNameView.getText().toString());
 		mate.setPassword(password);
@@ -198,24 +197,23 @@ public class SignUpActivity extends Activity {
 	 */
 	public class RegisterTask extends AsyncTask<Void, Void, Boolean> {
 
-		private final Mate mate;
+		private AEMate mate;
 
-		RegisterTask(Mate mate) {
+		RegisterTask(AEMate mate) {
 			this.mate = mate;
 		}
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
 
-			//Mate loginResponse = Connector.registerMate(mate);
-
-//			if ("testuser".equals(mUserName)) {// test user name
-//				return true;
-//			} else {
-//				return false;
-//			}
-			return true;
+			try {
+				mate = Connector.registerMate(mate);
+				return true;
+			} catch (IOException e) {
+				RMLog.e(getClass().getSimpleName(),"IOException");
+				e.printStackTrace();
+			}
+			return false;
 		}
 
 		@Override
@@ -225,6 +223,7 @@ public class SignUpActivity extends Activity {
 
 			if (success) {
 				Intent homeActivityIntent = new Intent(SignUpActivity.this,HomeActivity.class);
+				//homeActivityIntent.putExtra(RMClientConstants.BK_MATE_ID, mate);
 				startActivity(homeActivityIntent);
 				finish();
 			} else {

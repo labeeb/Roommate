@@ -1,18 +1,18 @@
-package com.arshu.roommate.task;
+package com.arshu.roommate.client.task;
 
 import java.io.IOException;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.arshu.roommate.appengine.Connector;
-import com.arshu.roommate.server.endpoint.rmendpoint.model.Mate;
+import com.arshu.roommate.client.appengine.Connector;
+import com.arshu.roommate.server.endpoint.rmendpoint.model.AEMate;
 
 public class RegistrationTask extends AsyncTask<Context, Integer, Long> {
 	
-	private Mate mate;
+	private AEMate mate;
 	
-	public RegistrationTask(Mate mate) {
+	public RegistrationTask(AEMate mate) {
 		this.mate = mate;
 	}
 	
@@ -20,7 +20,7 @@ public class RegistrationTask extends AsyncTask<Context, Integer, Long> {
 	@Override
 	protected Long doInBackground(Context... params) {
 		try {
-			Mate loginResponse = Connector.registerMate(mate);
+			AEMate loginResponse = Connector.registerMate(mate);
 			
 		
 			

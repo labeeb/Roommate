@@ -1,23 +1,27 @@
-package com.arshu.roommate.view;
+package com.arshu.roommate.client.view;
 
-import com.arshu.roommate.R;
+import java.io.IOException;
+import java.sql.SQLException;
 
-import android.app.Activity;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v4.widget.DrawerLayout;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+
+import com.arshu.roommate.client.R;
+import com.arshu.roommate.client.db.RMDBHelper;
+import com.arshu.roommate.client.db.RMDBUtil;
+import com.arshu.roommate.client.db.entity.CLMate;
+import com.arshu.roommate.client.util.RMClientConstants;
+import com.arshu.roommate.client.util.RMLog;
+import com.google.api.client.json.jackson2.JacksonFactory;
 
 public class HomeActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -43,11 +47,55 @@ public class HomeActivity extends Activity implements
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
+		CLMate mate = getEntityMateFromBundle(getIntent().getExtras());
+		getAllRooms(mate);
+		//get all rooms 
+		
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 	}
+	
+	public void getAllRooms(CLMate mate ){
+		try {
+			CLMate newEntityMate = RMDBUtil.getMateDao(RMDBHelper.getHelper(this)).queryForSameId(mate);
+			if(newEntityMate != null){
+				RMLog.d(getClass(), "not empty:"+newEntityMate.getUserName());
+			}else{
+				RMLog.e(getClass(), "newEntityMate empty!");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
+	public CLMate getEntityMateFromBundle(Bundle extras ){
+		CLMate mate = null;
+		if(extras != null){
+			String json = extras.getString(RMClientConstants.BK_MATE_JSON);
+			try {
+				mate = new JacksonFactory().fromString(json, CLMate.class);
+			} catch (IOException e) {
+				RMLog.unexpted(this.getClass(), "IOException while creating json from ");
+				e.printStackTrace();
+				finish();
+			}
+		}else{
+			RMLog.unexpted(this.getClass(), "No extras with bundle");
+			finish();
+		}
+		
+		if(mate != null){
+			RMLog.d(getClass(), "not empty:"+mate.getUserName());
+		}else{
+			RMLog.e(getClass(), "mate empty!");
+		}
+		return mate;
+		
+	}
+	
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
