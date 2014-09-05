@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/M6lzie9QXOaYPvQU4cEcQjSry-s\"",
+ "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/gQ0_sY7fCMi5gKPc5Z9Bflm-dHs\"",
  "discoveryVersion": "v1",
  "id": "rmendpoint:v1",
  "name": "rmendpoint",
@@ -72,24 +72,8 @@
   }
  },
  "schemas": {
-  "JoinRoomRequest": {
-   "id": "JoinRoomRequest",
-   "type": "object",
-   "properties": {
-    "mateList": {
-     "type": "array",
-     "items": {
-      "type": "string",
-      "format": "int64"
-     }
-    },
-    "room": {
-     "$ref": "Room"
-    }
-   }
-  },
-  "Mate": {
-   "id": "Mate",
+  "AEMate": {
+   "id": "AEMate",
    "type": "object",
    "properties": {
     "description": {
@@ -101,7 +85,7 @@
     "inRoomValues": {
      "type": "array",
      "items": {
-      "$ref": "Room"
+      "$ref": "AERoom"
      }
     },
     "mateId": {
@@ -116,14 +100,14 @@
     }
    }
   },
-  "Room": {
-   "id": "Room",
+  "AERoom": {
+   "id": "AERoom",
    "type": "object",
    "properties": {
     "allMates": {
      "type": "array",
      "items": {
-      "$ref": "Mate"
+      "$ref": "AEMate"
      }
     },
     "description": {
@@ -141,15 +125,31 @@
     }
    }
   },
-  "RoomCollection": {
-   "id": "RoomCollection",
+  "AERoomCollection": {
+   "id": "AERoomCollection",
    "type": "object",
    "properties": {
     "items": {
      "type": "array",
      "items": {
-      "$ref": "Room"
+      "$ref": "AERoom"
      }
+    }
+   }
+  },
+  "JoinRoomRequest": {
+   "id": "JoinRoomRequest",
+   "type": "object",
+   "properties": {
+    "mateList": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "format": "int64"
+     }
+    },
+    "room": {
+     "$ref": "AERoom"
     }
    }
   }
@@ -159,14 +159,14 @@
    "id": "rmendpoint.doLogin",
    "parameters": {
     "resource": {
-     "$ref": "Mate"
+     "$ref": "AEMate"
     }
    },
    "parameterOrder": [
     "resource"
    ],
    "returns": {
-    "$ref": "Mate"
+    "$ref": "AEMate"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -177,14 +177,14 @@
    "allowGet": true,
    "parameters": {
     "resource": {
-     "$ref": "Mate"
+     "$ref": "AEMate"
     }
    },
    "parameterOrder": [
     "resource"
    ],
    "returns": {
-    "$ref": "RoomCollection"
+    "$ref": "AERoomCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -201,7 +201,7 @@
     "resource"
    ],
    "returns": {
-    "$ref": "Room"
+    "$ref": "AERoom"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -211,14 +211,14 @@
    "id": "rmendpoint.registerMate",
    "parameters": {
     "resource": {
-     "$ref": "Mate"
+     "$ref": "AEMate"
     }
    },
    "parameterOrder": [
     "resource"
    ],
    "returns": {
-    "$ref": "Mate"
+    "$ref": "AEMate"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

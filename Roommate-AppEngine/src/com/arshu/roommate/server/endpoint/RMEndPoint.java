@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.arshu.roommate.RMConstants;
 import com.arshu.roommate.RMOfyService;
-import com.arshu.roommate.server.entity.Mate;
-import com.arshu.roommate.server.entity.Room;
+import com.arshu.roommate.server.entity.AEMate;
+import com.arshu.roommate.server.entity.AERoom;
 import com.arshu.roommate.vo.JoinRoomRequest;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -22,27 +22,27 @@ import com.googlecode.objectify.Query;
 public class RMEndPoint {
 	
 	@ApiMethod(name = "matesJoinRoom")
-	public Room matesJoinRoom(JoinRoomRequest joinRoomRequest){
+	public AERoom matesJoinRoom(JoinRoomRequest joinRoomRequest){
 		Objectify ofy = RMOfyService.ofy();
 		
-		Key<Room> roomKey = null;
-		Room room = joinRoomRequest.getRoom();
+		Key<AERoom> roomKey = null;
+		AERoom room = joinRoomRequest.getRoom();
 		
 		Long roomId = room.getRoomId();
 		
 		if( roomId != null && roomId > 0){
-			roomKey = Key.create(Room.class, roomId);
+			roomKey = Key.create(AERoom.class, roomId);
 			room = ofy.get(roomKey);
 		}else{
 			roomKey = ofy.put(room);
 		}
 		
 		for(Long mateId: joinRoomRequest.getMateList() ){
-			Key<Mate> mateKey = Key.create(Mate.class, mateId);
+			Key<AEMate> mateKey = Key.create(AEMate.class, mateId);
 			
 			room.getMatesInRoom().add(mateKey);
 			
-			Mate mate = ofy.get(mateKey);
+			AEMate mate = ofy.get(mateKey);
 			mate.getInRooms().add(roomKey);
 			ofy.put(mate);
 		}
@@ -54,23 +54,23 @@ public class RMEndPoint {
 	}
 	
 	@ApiMethod(name = "getAllRooms")
-	public List<Room> getAllRooms(Mate mate){
+	public List<AERoom> getAllRooms(AEMate mate){
 		Objectify ofy = RMOfyService.ofy();
-		Mate mate1 = ofy.get(Key.create(Mate.class, mate.getMateId()));
+		AEMate mate1 = ofy.get(Key.create(AEMate.class, mate.getMateId()));
 		mate1.loadAllRooms();
 		return mate1.getInRoomValues();
 	}
 	
 	@ApiMethod(name = "doLogin")
-	public Mate doLogin(Mate checkMate) {
+	public AEMate doLogin(AEMate checkMate) {
 		//ObjectifyService ofy;
 		
 		Objectify ofy = RMOfyService.ofy();
 		//Mate mate = new Mate();
 		
-		Query<Mate> query = ofy.query(Mate.class);
-		query.filter(Mate.USER_NAME, checkMate.getUserName());
-		Mate mate =query.get();
+		Query<AEMate> query = ofy.query(AEMate.class);
+		query.filter(AEMate.USER_NAME, checkMate.getUserName());
+		AEMate mate =query.get();
 		if(null != mate){
 			mate.loadAllRooms();
 		}
@@ -80,19 +80,19 @@ public class RMEndPoint {
 	
 	
 	@ApiMethod(name = "registerMate")
-	public Mate registerMate(Mate checkMate) {
+	public AEMate registerMate(AEMate checkMate) {
 		Objectify ofy =  RMOfyService.ofy();
 		//Mate mate = new Mate();
-		Room home = new Room();
+		AERoom home = new AERoom();
 		home.setDescription("Auto gerneration room");
 		home.setName(RMConstants.HOME+checkMate.getEmailAddress());
 		ofy.put(home);
-		List<Key<Room>> inRooms = new ArrayList<Key<Room>>(1);
-		Key<Room> roomKey = ofy.put(home);
+		List<Key<AERoom>> inRooms = new ArrayList<Key<AERoom>>(1);
+		Key<AERoom> roomKey = ofy.put(home);
 		inRooms.add(roomKey);
 		checkMate.setInRooms(inRooms);
-		List<Key<Mate>> matesInRoom = new ArrayList<Key<Mate>>();
-		Key<Mate> mates = ofy.put(checkMate);
+		List<Key<AEMate>> matesInRoom = new ArrayList<Key<AEMate>>();
+		Key<AEMate> mates = ofy.put(checkMate);
 		matesInRoom.add(mates);
 		home.setMatesInRoom(matesInRoom);
 		ofy.put(home);

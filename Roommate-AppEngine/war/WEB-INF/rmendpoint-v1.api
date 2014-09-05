@@ -76,7 +76,7 @@
       }
     },
     "rmendpoint.getAllRooms" : {
-      "path" : "roomcollection",
+      "path" : "aeroomcollection",
       "httpMethod" : "GET",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
@@ -94,8 +94,8 @@
   },
   "descriptor" : {
     "schemas" : {
-      "Mate" : {
-        "id" : "Mate",
+      "AEMate" : {
+        "id" : "AEMate",
         "type" : "object",
         "properties" : {
           "mateId" : {
@@ -117,13 +117,13 @@
           "inRoomValues" : {
             "type" : "array",
             "items" : {
-              "$ref" : "Room"
+              "$ref" : "AERoom"
             }
           }
         }
       },
-      "Room" : {
-        "id" : "Room",
+      "AERoom" : {
+        "id" : "AERoom",
         "type" : "object",
         "properties" : {
           "roomId" : {
@@ -142,7 +142,7 @@
           "allMates" : {
             "type" : "array",
             "items" : {
-              "$ref" : "Mate"
+              "$ref" : "AEMate"
             }
           }
         }
@@ -159,18 +159,18 @@
             }
           },
           "room" : {
-            "$ref" : "Room"
+            "$ref" : "AERoom"
           }
         }
       },
-      "RoomCollection" : {
-        "id" : "RoomCollection",
+      "AERoomCollection" : {
+        "id" : "AERoomCollection",
         "type" : "object",
         "properties" : {
           "items" : {
             "type" : "array",
             "items" : {
-              "$ref" : "Room"
+              "$ref" : "AERoom"
             }
           }
         }
@@ -179,10 +179,10 @@
     "methods" : {
       "com.arshu.roommate.server.endpoint.RMEndPoint.registerMate" : {
         "request" : {
-          "$ref" : "Mate"
+          "$ref" : "AEMate"
         },
         "response" : {
-          "$ref" : "Mate"
+          "$ref" : "AEMate"
         }
       },
       "com.arshu.roommate.server.endpoint.RMEndPoint.matesJoinRoom" : {
@@ -190,23 +190,23 @@
           "$ref" : "JoinRoomRequest"
         },
         "response" : {
-          "$ref" : "Room"
+          "$ref" : "AERoom"
         }
       },
       "com.arshu.roommate.server.endpoint.RMEndPoint.doLogin" : {
         "request" : {
-          "$ref" : "Mate"
+          "$ref" : "AEMate"
         },
         "response" : {
-          "$ref" : "Mate"
+          "$ref" : "AEMate"
         }
       },
       "com.arshu.roommate.server.endpoint.RMEndPoint.getAllRooms" : {
         "request" : {
-          "$ref" : "Mate"
+          "$ref" : "AEMate"
         },
         "response" : {
-          "$ref" : "RoomCollection"
+          "$ref" : "AERoomCollection"
         }
       }
     }

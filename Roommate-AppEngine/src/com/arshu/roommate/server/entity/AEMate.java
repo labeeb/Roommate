@@ -15,7 +15,7 @@ import com.googlecode.objectify.annotation.Entity;
 
 
 @Entity
-public class Mate {
+public class AEMate {
 	@Id
 	private Long mateId;
 	public static final String ID = "mateId";
@@ -28,24 +28,24 @@ public class Mate {
 	private String description;
 	
 	@ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-	private List<Key<Room>> inRooms = new ArrayList<Key<Room>>();
+	private List<Key<AERoom>> inRooms = new ArrayList<Key<AERoom>>();
 	
 	@NotPersistent
-	private List<Room> inRoomValues = new ArrayList<Room>();
+	private List<AERoom> inRoomValues = new ArrayList<AERoom>();
 
-	public Mate() {
+	public AEMate() {
 	}
 	
 	public void loadAllRooms(){
 		if(inRooms != null){
 			Objectify ofy =  RMOfyService.ofy();
-			for(Key<Room> key:inRooms){
+			for(Key<AERoom> key:inRooms){
 				inRoomValues.add(ofy.get(key));
 			}
 		}
 	}
 	
-	public List<Room> getInRoomValues() {
+	public List<AERoom> getInRoomValues() {
 		return inRoomValues;
 	}
 
@@ -61,15 +61,15 @@ public class Mate {
 		return ID;
 	}
 
-	public void setInRoomValues(List<Room> inRoomValues) {
+	public void setInRoomValues(List<AERoom> inRoomValues) {
 		this.inRoomValues = inRoomValues;
 	}
 	
-	public List<Key<Room>> getInRooms() {
+	public List<Key<AERoom>> getInRooms() {
 		return inRooms;
 	}
 
-	public void setInRooms(List<Key<Room>> inRooms) {
+	public void setInRooms(List<Key<AERoom>> inRooms) {
 		this.inRooms = inRooms;
 	}
 	

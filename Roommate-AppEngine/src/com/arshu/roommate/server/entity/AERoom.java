@@ -14,7 +14,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 
 @Entity
-public class Room {
+public class AERoom {
 	
 	@Id
 	private Long roomId;
@@ -25,29 +25,29 @@ public class Room {
 	private String ownerMateId;
 	
 	@ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-	private List<Key<Mate>> matesInRoom = new ArrayList<Key<Mate>>();
+	private List<Key<AEMate>> matesInRoom = new ArrayList<Key<AEMate>>();
 	
 
 	@NotPersistent
-	private List<Mate> allMates = new ArrayList<Mate>();
+	private List<AEMate> allMates = new ArrayList<AEMate>();
 	
-	public Room() {
+	public AERoom() {
 	}
 	
 	public void refreshAllMates(){
 		if(matesInRoom != null){
 			Objectify ofy =  RMOfyService.ofy();
-			for(Key<Mate> key:matesInRoom){
+			for(Key<AEMate> key:matesInRoom){
 				allMates.add(ofy.get(key));
 			}
 		}
 	}
 	
-	public List<Mate> getAllMates() {
+	public List<AEMate> getAllMates() {
 		return allMates;
 	}
 
-	public void setAllMates(List<Mate> allMates) {
+	public void setAllMates(List<AEMate> allMates) {
 		this.allMates = allMates;
 	}
 
@@ -55,11 +55,11 @@ public class Room {
 		this.roomId = roomId;
 	}
 
-	public List<Key<Mate>> getMatesInRoom() {
+	public List<Key<AEMate>> getMatesInRoom() {
 		return matesInRoom;
 	}
 
-	public void setMatesInRoom(List<Key<Mate>> matesInRoom) {
+	public void setMatesInRoom(List<Key<AEMate>> matesInRoom) {
 		this.matesInRoom = matesInRoom;
 	}
 
