@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.arshu.roommate.RMUtils;
 import com.arshu.roommate.client.R;
 import com.arshu.roommate.client.appengine.Connector;
+import com.arshu.roommate.client.db.entity.CLMate;
 import com.arshu.roommate.client.util.RMLog;
 import com.arshu.roommate.server.endpoint.rmendpoint.model.AEMate;
 
@@ -113,7 +114,7 @@ public class SignUpActivity extends Activity {
 			}
 		}
 		
-		AEMate mate = new AEMate();
+		CLMate mate = new CLMate();
 		mate.setEmailAddress(mEmailView.getText().toString());
 		mate.setUserName(mUserNameView.getText().toString());
 		mate.setPassword(password);
@@ -197,9 +198,9 @@ public class SignUpActivity extends Activity {
 	 */
 	public class RegisterTask extends AsyncTask<Void, Void, Boolean> {
 
-		private AEMate mate;
+		private CLMate mate;
 
-		RegisterTask(AEMate mate) {
+		RegisterTask(CLMate mate) {
 			this.mate = mate;
 		}
 
@@ -207,7 +208,7 @@ public class SignUpActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 
 			try {
-				mate = Connector.registerMate(mate);
+				Connector.registerMate(mate);
 				return true;
 			} catch (IOException e) {
 				RMLog.e(getClass().getSimpleName(),"IOException");

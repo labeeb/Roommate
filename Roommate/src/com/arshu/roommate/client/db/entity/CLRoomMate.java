@@ -14,13 +14,17 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class CLRoomMate  extends BaseTable{
 	
+	public static final String ROOM_MATE_ID ="roomMateIdId";
+	@DatabaseField(id = true, columnName=ROOM_MATE_ID)
+	private String roomMateIdId;
+	
 	public final static String MATE_ID = "mate_id";
 	@DatabaseField(foreign = true, columnName = MATE_ID)
-	CLMate mate;
+	private CLMate mate;
 	
 	public final static String ROOM_ID = "room_id";
 	@DatabaseField(foreign = true, columnName = ROOM_ID)
-	CLRoom room;
+	private CLRoom room;
 
 	public CLRoomMate() {
 		// for ormlite
@@ -29,6 +33,8 @@ public class CLRoomMate  extends BaseTable{
 	public CLRoomMate(CLRoom room,CLMate mate) {
 		this.mate = mate;
 		this.room = room;
+		this.roomMateIdId = String.valueOf(room.getRoomId())+
+				"-" + String.valueOf(mate.getMateId());
 	}
 	
 	/*
@@ -69,7 +75,7 @@ public class CLRoomMate  extends BaseTable{
 		// build our outer query for Room objects
 		QueryBuilder<CLRoom, Integer> roomQb = RMDBUtil.getRoomDao(helper).queryBuilder();
 		// where the id matches in the room-id from the inner query
-		roomQb.where().in(CLRoom.ROW_ID, roomMateQb);
+		roomQb.where().in(CLRoom.ROOM_ID, roomMateQb);
 		return roomQb.prepare();
 	}
 
@@ -86,7 +92,7 @@ public class CLRoomMate  extends BaseTable{
 		// build our outer query
 		QueryBuilder<CLMate, Integer> mateQb = RMDBUtil.getMateDao(helper).queryBuilder();
 		// where the mate-id matches the inner query's mate-id field
-		mateQb.where().in(CLMate.ROW_ID, roomMateQb);
+		mateQb.where().in(CLMate.MATE_ID, roomMateQb);
 		return mateQb.prepare();
 	}
 

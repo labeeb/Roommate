@@ -1,5 +1,10 @@
 package com.arshu.roommate.client.db.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.arshu.roommate.server.endpoint.rmendpoint.model.AEMate;
+import com.arshu.roommate.server.endpoint.rmendpoint.model.AERoom;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -7,7 +12,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class CLMate extends BaseTable{
 	
 	public static final String MATE_ID = "mateId";
-	@DatabaseField(columnName = MATE_ID)
+	@DatabaseField(id= true, columnName = MATE_ID)
 	private Long mateId;
 	
 	public static final String USER_NAME = "userName";
@@ -23,10 +28,46 @@ public class CLMate extends BaseTable{
 	@DatabaseField
 	private String description;
 
+	private List<CLRoom> inRooms;
+	
 	public CLMate() {
 		// for ormlite
 	}
+	public CLMate(AEMate aeMate) {
+		this.userName = aeMate.getUserName();
+		this.password = aeMate.getPassword();
+		this.emailAddress = aeMate.getEmailAddress();
+		this.description = aeMate.getDescription();
+		this.mateId = aeMate.getMateId();
+		setInRooms(aeMate.getInRoomValues());
+	}
 	
+	public AEMate createAEMate() {
+		AEMate aeMate = new AEMate();
+		aeMate.setUserName(getUserName());
+		aeMate.setPassword(getPassword());
+		aeMate.setEmailAddress(getEmailAddress());
+		aeMate.setDescription(getDescription());
+		aeMate.setMateId(getMateId());
+		return aeMate;
+	}
+	
+	/**
+	 * This will not have value from db, just a value holder only 
+	 * @return
+	 */
+	public List<CLRoom> getInRooms() {
+		return inRooms;
+	}
+	
+	
+	public void setInRooms(List<AERoom> inRoomValues) {
+		this.inRooms = new ArrayList<CLRoom>();
+		for(AERoom aeRoom:inRoomValues){
+			this.inRooms.add(new CLRoom(aeRoom));
+		}
+		
+	}
 	public Long getMateId() {
 		return mateId;
 	}

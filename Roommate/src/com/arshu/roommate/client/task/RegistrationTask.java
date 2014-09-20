@@ -6,13 +6,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.arshu.roommate.client.appengine.Connector;
-import com.arshu.roommate.server.endpoint.rmendpoint.model.AEMate;
+import com.arshu.roommate.client.db.entity.CLMate;
 
 public class RegistrationTask extends AsyncTask<Context, Integer, Long> {
 	
-	private AEMate mate;
+	private CLMate mate;
 	
-	public RegistrationTask(AEMate mate) {
+	public RegistrationTask(CLMate mate) {
 		this.mate = mate;
 	}
 	
@@ -20,7 +20,7 @@ public class RegistrationTask extends AsyncTask<Context, Integer, Long> {
 	@Override
 	protected Long doInBackground(Context... params) {
 		try {
-			AEMate loginResponse = Connector.registerMate(mate);
+			CLMate loginResponse = Connector.registerMate(mate);
 			
 		
 			

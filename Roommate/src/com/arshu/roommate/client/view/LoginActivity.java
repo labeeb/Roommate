@@ -2,8 +2,6 @@ package com.arshu.roommate.client.view;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import android.animation.Animator;
@@ -23,6 +21,7 @@ import android.widget.TextView;
 
 import com.arshu.roommate.RMUtils;
 import com.arshu.roommate.client.R;
+import com.arshu.roommate.client.appengine.Connector;
 import com.arshu.roommate.client.db.RMDBHelper;
 import com.arshu.roommate.client.db.RMDBUtil;
 import com.arshu.roommate.client.db.entity.CLMate;
@@ -70,94 +69,18 @@ public class LoginActivity extends Activity  {
 					}
 				});
 
-		
-
 		mLoginFormView = findViewById(R.id.login_form);
 		mProgressView = findViewById(R.id.login_progress);
 	}
 
 	public void onSignInButtonClick(View view){
-		//attemptLogin();
-		
-		
-		CLMate mate = new CLMate();
-		mate.setUserName("Test");
-		mate.setPassword("Pass");
-		mate.setEmailAddress("email");
-		mate.setMateId(Long.valueOf(12312));
-		
-		
-		CLRoom room = new CLRoom();
-		room.setName("roomName");
-		room.setRoomId(12l);
-		room.setDescription("desc");  
-		
-		CLRoomMate roomMate = new CLRoomMate(room,mate);
-		
-		CLRoom room2 = new CLRoom();
-		room2.setName("second room");
-		room2.setRoomId(13L);
-		room2.setDescription("second desc");      
-		
-		CLRoomMate roomMate2 = new CLRoomMate(room2,mate);
-		
-	
-		if(null != mate){
-			RMLog.d(this,"POC", "mate id: "+mate.getMateId());
-			try {
-				
-				RMDBUtil.getMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(mate);
-				RMDBUtil.getRoomDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(room);
-				RMDBUtil.getRoomDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(room2);
-				
-				RMDBUtil.getRoomMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(roomMate);
-				RMDBUtil.getRoomMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(roomMate2);
-			} catch (SQLException e) {
-				RMLog.d(this,"POC","SQLException createOrUpdate");
-				e.printStackTrace();
-			}
-			//return true;
-		}
+		attemptLogin();
 	}
 	
 	public void onRegisterButtonClick(View view){
-		
-		try {
-			RMDBHelper helper = RMDBHelper.getHelper(LoginActivity.this);
-			List<CLMate> mates = RMDBUtil.getMateDao(helper).queryForAll();
-			if(mates != null){
-				RMLog.d(this,"POC","mates not null "+mates.size());
-				List<CLRoom> inRooms = CLRoomMate.lookupRoomsForMate(mates.get(0), helper);
-				RMLog.d(this,"POC","inRooms not null "+inRooms.size());
-				for(CLRoom room:inRooms){
-					 RMLog.d(this,"POC","inRooms name  "+room.getName());
-				}
-				
-			}else{
-				RMLog.d(this,"POC","mates null");
-			}
-			
-			// now from room 
-			List<CLRoom> rooms = RMDBUtil.getRoomDao(helper).queryForAll(); 
-			if(rooms != null){
-				RMLog.d(this,"POC","rooms not null "+rooms.size());
-				List<CLMate> allMates = CLRoomMate.lookupMatesForRoom(rooms.get(0), helper); 
-				RMLog.d(this,"POC","rooms not null "+allMates.size());
-				for(CLMate mate:allMates){
-					 RMLog.d(this,"POC","CLMate in room name  "+mate.getUserName());
-				}
-				
-			}else{
-				RMLog.d(this,"POC","rooms null");
-			}
-			
-		} catch (SQLException e) {
-			RMLog.d(this,"POC","SQLException query");
-			e.printStackTrace();
-		}
-//		Intent signUpActivityIntent = new Intent(LoginActivity.this,SignUpActivity.class);
-//		startActivity(signUpActivityIntent);
-//		finish();
+		Intent signUpActivityIntent = new Intent(LoginActivity.this,SignUpActivity.class);
+		startActivity(signUpActivityIntent);
+		finish();
 	}
 	
 	public void attemptLogin() {
@@ -253,11 +176,10 @@ public class LoginActivity extends Activity  {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+	public class UserLoginTask extends AsyncTask<Void, Void, CLMate> {
 
 		private final String mUserName;
 		private final String mPassword;
-		private CLMate mate = null;;
 
 		UserLoginTask(String userName, String password) {
 			mUserName = userName;
@@ -266,48 +188,43 @@ public class LoginActivity extends Activity  {
 		}
 
 		@Override
-		protected Boolean doInBackground(Void... params) {
-			
+		protected CLMate doInBackground(Void... params) {
+			CLMate mate = null;
 			try {
-				mate = new CLMate();
-				mate.setUserName(mUserName);
-				mate.setPassword(mPassword);
-				mate.setEmailAddress("email");
-				mate.setMateId(Long.valueOf(12312));
-				
-				Collection<CLRoom> inRoomValues = new ArrayList<CLRoom>();
-				CLRoom room = new CLRoom();
-				room.setName("roomName");
-				room.setRoomId(12l);
-				room.setDescription("desc");      
-				
-				inRoomValues.add(room);
-				
-				//mate.setInRooms(inRoomValues);
-			
+				mate = Connector.doLogin(mUserName, mPassword);
 				if(null != mate){
 					RMLog.d(getClass(), "mate id: "+mate.getMateId());
-					RMDBUtil.getMateDao(RMDBHelper.getHelper(LoginActivity.this)).createOrUpdate(mate);
-					return true;
+					RMDBHelper helper = RMDBHelper.getHelper(LoginActivity.this);
+					RMDBUtil.getMateDao(helper).createOrUpdate(mate);
+					List<CLRoom> inRooms = mate.getInRooms();
+					if(null != inRooms){
+						for(CLRoom room:inRooms){
+							RMDBUtil.getRoomDao(helper).createOrUpdate(room);
+							RMDBUtil.getRoomMateDao(helper).createIfNotExists(new CLRoomMate(room, mate));
+						}
+					}
+					return mate;
 				}else{
 					RMLog.d(getClass(), "mate is null ");
-					return false;
 				}
 			} catch (SQLException e) {
 				RMLog.e(getClass(), "IOException");
 				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-			return true;
+			return null;
 			
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean success) {
+		protected void onPostExecute(final CLMate mate) {
 			mAuthTask = null;
 			showProgress(false);
 
-			if (success && null != mate) { //Double check 
+			if (null != mate) { 
 				Intent homeActivityIntent = new Intent(LoginActivity.this,HomeActivity.class);
 				String json = null;
 				try {

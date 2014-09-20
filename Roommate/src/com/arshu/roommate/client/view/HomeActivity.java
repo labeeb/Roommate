@@ -47,9 +47,7 @@ public class HomeActivity extends Activity implements
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
-		CLMate mate = getEntityMateFromBundle(getIntent().getExtras());
-		getAllRooms(mate);
-		//get all rooms 
+		//TODO: commenting for testing: CLMate mate = getEntityMateFromBundle(getIntent().getExtras());
 		
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
@@ -99,11 +97,15 @@ public class HomeActivity extends Activity implements
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
+		BaseFragment fragment = PlaceholderFragment.newInstance(position + 1);
+		if(position == 0){
+			fragment = new ListRoomFragment();
+		}
+		
 		FragmentManager fragmentManager = getFragmentManager();
 		fragmentManager
 				.beginTransaction()
-				.replace(R.id.container,
-						PlaceholderFragment.newInstance(position + 1)).commit();
+				.replace(R.id.container,fragment).commit();
 	}
 
 	public void onSectionAttached(int number) {
@@ -155,7 +157,7 @@ public class HomeActivity extends Activity implements
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class PlaceholderFragment extends BaseFragment {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.

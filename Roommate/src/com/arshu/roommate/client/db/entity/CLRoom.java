@@ -1,13 +1,19 @@
 package com.arshu.roommate.client.db.entity;
 
+import com.arshu.roommate.server.endpoint.rmendpoint.model.AERoom;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable
 public class CLRoom  extends BaseTable{
 	
+	@DatabaseField
+	private Long _id;//For simple cursor loader 
+	
+
+
 	public static final String ROOM_ID = "roomId";
-	@DatabaseField(columnName = ROOM_ID)
+	@DatabaseField( id= true,columnName = ROOM_ID)//
 	private Long roomId;
 	
 	@DatabaseField
@@ -23,6 +29,13 @@ public class CLRoom  extends BaseTable{
 		// for ormlite
 	}
 	
+	public CLRoom(AERoom aeRoom) {
+		setDescription(aeRoom.getDescription());
+		setName(aeRoom.getName());
+		setOwnerMateId(aeRoom.getOwnerMateId());
+		setRoomId(aeRoom.getRoomId());
+	}
+	
 	public Long getRoomId() {
 		return roomId;
 	}
@@ -31,6 +44,8 @@ public class CLRoom  extends BaseTable{
 		this.roomId = roomId;
 	}
 
+	
+	
 	public String getName() {
 		return name;
 	}

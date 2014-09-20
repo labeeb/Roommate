@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.arshu.roommate.client.CloudEndpointUtils;
+import com.arshu.roommate.client.db.entity.CLMate;
 import com.arshu.roommate.server.endpoint.rmendpoint.Rmendpoint;
 import com.arshu.roommate.server.endpoint.rmendpoint.model.AEMate;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -15,7 +16,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 
 public class Connector {
 
-	public static AEMate registerMate(AEMate mate) throws IOException {
+	public static CLMate registerMate(CLMate mate) throws IOException {
 		//Rmendpoint.Builder 
 		
 		Rmendpoint.Builder  endpointBuilder = new Rmendpoint.Builder(
@@ -27,11 +28,11 @@ public class Connector {
 		Rmendpoint  endpoint = CloudEndpointUtils.updateBuilder(
 				endpointBuilder).build();
 
-		AEMate result = endpoint.registerMate(mate).execute();
-		return result;
+		AEMate result = endpoint.registerMate(mate.createAEMate()).execute();
+		return new CLMate(result);
 	}
 	
-	public static AEMate doLogin(String userName,String password) throws IOException {
+	public static CLMate doLogin(String userName,String password) throws IOException {
 		//Rmendpoint.Builder 
 		
 		Rmendpoint.Builder  endpointBuilder = new Rmendpoint.Builder(
@@ -47,7 +48,7 @@ public class Connector {
 		content.setUserName(userName);
 		content.setPassword(password);
 		AEMate result = endpoint.doLogin(content ).execute();
-		return result;
+		return new CLMate(result);
 	}
 
 	public class EndpointsTask extends AsyncTask<Context, Integer, Long> {

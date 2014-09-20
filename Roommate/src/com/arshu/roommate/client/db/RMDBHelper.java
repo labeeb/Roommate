@@ -74,6 +74,9 @@ public class RMDBHelper extends OrmLiteSqliteOpenHelper {
 				TableUtils
 						.createTableIfNotExists(connectionSource, entityClass);
 			}
+			
+			RMDBUtil.saveInitialValues(this);
+			
 		} catch (SQLException e) {
 			RMLog.e(getClass(), "Can't create database");
 			throw new RuntimeException(e);
