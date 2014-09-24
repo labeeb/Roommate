@@ -1,0 +1,8 @@
+Roommate
+========
+* Create/edit different rooms and add/remove a roommate to it
+* In a room 
+  * You can share expenses, Expense report, etc.
+  * Group messaging
+  * Map where it locates where different roommates are now
+  * Share photos 
