@@ -6,10 +6,16 @@ as well as those methods defined in an API.
 
 
 import endpoints
-from enity.account import Account
+
 from protorpc import messages
 from protorpc import message_types
 from protorpc import remote
+
+from enity.ae_mate import AEMate
+from enity.ae_mate import AEMateRequest
+from enity.ae_mate import AEMateResponse
+from enity.ae_room import AERoom
+
 
 
 
@@ -36,16 +42,21 @@ STORED_GREETINGS = GreetingCollection(items=[
 class HelloWorldApi(remote.Service):
     """Helloworld API v1."""
 
-    @endpoints.method(message_types.VoidMessage, Greeting,
-                      path='helloLabeeb', http_method='GET',
-                      name='greetings.helloLabeeb')
-    def labeeb_testing(self, unused_request):
-        sandy = Account(username='diff folder',
-                userid=123,
-                email='folder@gmail.com')
-        sandy_key = sandy.put()
-        msg = 'key =',sandy_key
-        return  Greeting(message=msg,test=False)
+    @endpoints.method(AEMateRequest, AEMateResponse,
+                      path='registerMate', http_method='GET',
+                      name='roommate.registerMate')
+    def labeeb_testing(self, request):
+        #sandy =request
+        #
+        mate = AEMate()
+        mate.copyFromMateRequest(request);
+        sandy_key = mate.put()
+        response = AEMateResponse()
+        response.username = mate.username
+        response.password = mate.password
+        response.mateId = sandy_key.id()
+        #msg = "key =",mate.description #,sandy_key
+        return  response
     
     @endpoints.method(message_types.VoidMessage, GreetingCollection,
                       path='hellogreeting', http_method='GET',
